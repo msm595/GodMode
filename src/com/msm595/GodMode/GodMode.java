@@ -25,8 +25,6 @@ public class GodMode extends JavaPlugin {
     private final GMEntityListener entityListener = new GMEntityListener(this);
     public static PluginDescriptionFile pdfFile;
     
-    private boolean godOnLogin = true;
-    
     private boolean usePermissions = false;
     public static PermissionHandler Permissions;
     private Listener Listener = new Listener();
@@ -40,7 +38,7 @@ public class GodMode extends JavaPlugin {
         public void onPluginEnabled(PluginEvent event) {
             if(event.getPlugin().getDescription().getName().equals("Permissions")) {
                 GodMode.Permissions = ((Permissions)event.getPlugin()).Security;
-                System.out.println("["+pdfFile.getName().toUpperCase()+"] Attached plugin to Permissions. Enjoy~");
+                System.out.println("["+pdfFile.getName().toUpperCase()+"] Attached plugin to Permissions.");
                 usePermissions=true;
             }
         }
@@ -71,7 +69,7 @@ public class GodMode extends JavaPlugin {
         pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLUGIN_ENABLE, Listener, Event.Priority.Monitor, this);
         //Print that the plugin has been enabled!
-        System.out.println( "["+pdfFile.getName().toUpperCase() + "] version " + pdfFile.getVersion() + " is enabled!" );
+        System.out.println( "["+pdfFile.getName().toUpperCase() + "] " + pdfFile.getVersion() + " is enabled!" );
 
     }
 
@@ -95,34 +93,29 @@ public class GodMode extends JavaPlugin {
         
         if(usePermissions) {
             int perm=0;
-            if(GodMode.Permissions.has(player, "GodMode.godByDefault")) {
+            if(GodMode.Permissions.permission(player, "godmode.godByDefault")) {
                 perm=1;
             }
             
-            if(GodMode.Permissions.has(player, "GodMode.godSelf")) {
+            if(GodMode.Permissions.permission(player, "godmode.godSelf")) {
                 perm=perm|2;
             }
             
-            if(GodMode.Permissions.has(player, "GodMode.neverOnFire")) {
+            if(GodMode.Permissions.permission(player, "godmode.neverOnFire")) {
                 perm=perm|4;
             }
             
             return perm;
         }
         
-         return 0;
+         return 2; //for now if there isn't permissions let every user use god,
+         //will change in next version
     }
     
     //The method toggleVision which if the player is on the hashmap will remove the player else it will add the player.
     //Also sends user a message to notify them.
-    public void toggleGodMode(Player player) {
-        
-        int perm=0;
-        if(this.gods.get(player)!=null) {
-            perm=this.gods.get(player);
-        } else if(isGod(player)) {
-            perm=1;
-        }
+    public void toggleGodMode(Player player) {     
+        int perm=getPerm(player);
         
         if ((perm&1) == 1) {
             this.gods.put(player, perm^1);
