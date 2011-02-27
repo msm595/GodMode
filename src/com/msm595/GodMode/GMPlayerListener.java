@@ -19,8 +19,8 @@ public class GMPlayerListener extends PlayerListener{
 		//Get the player that talked.
 		Player player = event.getPlayer();
 		//If the first part of the string is /basic or /b then do this.
-		if ((split[0].equalsIgnoreCase("/godmode"))
-				|| (split[0].equalsIgnoreCase("/god"))) {
+		if ((split[0].equalsIgnoreCase("/godmode") || split[0].equalsIgnoreCase("/god"))
+                        && plugin.canGod(player)) {
 			//Run the method toggleVision for player
 			plugin.toggleGodMode(player);
 			event.setCancelled(true);

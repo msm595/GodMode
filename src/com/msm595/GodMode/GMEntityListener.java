@@ -18,13 +18,14 @@ public class GMEntityListener extends EntityListener{
 	 public void onEntityDamage(EntityDamageEvent event) {
 		 Entity entity = event.getEntity();
 		 if(entity instanceof Player) {
-			 //System.out.println("Player damaged");
 			 Player player = (Player)entity;
+                         
 			 //player.sendMessage("You were damaged by " + event.getCause().name());
 			 if(plugin.isGod(player)) {
 				 //event.setDamage(0); //not needed?
 				 event.setCancelled(true);
-				 if(event.getCause().equals(DamageCause.FIRE_TICK)) {
+				 if(plugin.noFire(player) &&
+                                     event.getCause().equals(DamageCause.FIRE_TICK)) {
 					 player.setFireTicks(0);
 				 }
 			 }
