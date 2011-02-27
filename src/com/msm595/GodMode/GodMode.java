@@ -55,7 +55,7 @@ public class GodMode extends JavaPlugin {
     //When the plugin is disabled this method is called.
     public void onDisable() {
         //Print "Basic Disabled" on the log.
-        System.out.println("Basic Disabled");
+        System.out.println("["+pdfFile.getName().toUpperCase()+"] Disabled");
 
     }
 
