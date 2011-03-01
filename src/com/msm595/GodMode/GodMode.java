@@ -14,6 +14,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 
 /**
 * Sample plugin for Bukkit
@@ -21,7 +24,6 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 * @author Dinnerbone
 */
 public class GodMode extends JavaPlugin {
-    private final GMPlayerListener playerListener = new GMPlayerListener(this);
     private final GMEntityListener entityListener = new GMEntityListener(this);
     public static PluginDescriptionFile pdfFile;
     
@@ -29,6 +31,10 @@ public class GodMode extends JavaPlugin {
     public static PermissionHandler Permissions;
     private Listener Listener = new Listener();
 
+    
+    /*
+     * Permissions code, listen in onto permissions, check if it's there
+     */
     private class Listener extends ServerListener {
 
         public Listener() {
@@ -65,12 +71,40 @@ public class GodMode extends JavaPlugin {
         pdfFile = this.getDescription();
         //Create the pluginmanage pm.
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLUGIN_ENABLE, Listener, Event.Priority.Monitor, this);
         //Print that the plugin has been enabled!
         System.out.println( "["+pdfFile.getName().toUpperCase() + "] " + pdfFile.getVersion() + " is enabled!" );
 
+    }
+    
+    @Override
+    public boolean onCommand(CommandSender sender, Command c, String commandLabel, String[] args) {        
+        String command = c.getName().toLowerCase();
+        if(sender instanceof Player) {
+            Player player = (Player)sender;
+            
+            if(args.length==0 && canGod(player) &&(command.equals("god") || command.equals("godmode"))) {
+                toggleGodMode(player);
+                return true;
+            }
+            
+            if(args.length==1 &&(command.equals("god") || command.equals("godmode"))) {
+                Player victim = getServer().getPlayer(args[0]);
+                if(victim!=null) {
+                    if(toggleGodMode(victim)) {
+                        player.sendMessage(ChatColor.GREEN+"Godmode enabled on "+args[0]);
+                    } else {
+                        player.sendMessage(ChatColor.RED+"Godmode disabled on "+args[0]);
+                    }
+                    return true;
+                }
+            }
+        } else {
+            //System.out.println(sender.getClass());
+        }
+        
+        return false;
     }
 
     //The method enabled which checks to see if the player is in the hashmap basicUsers
@@ -114,15 +148,17 @@ public class GodMode extends JavaPlugin {
     
     //The method toggleVision which if the player is on the hashmap will remove the player else it will add the player.
     //Also sends user a message to notify them.
-    public void toggleGodMode(Player player) {     
+    public boolean toggleGodMode(Player player) {     
         int perm=getPerm(player);
         
         if ((perm&1) == 1) {
             this.gods.put(player, perm^1);
-            player.sendMessage("Godmode disabled (" + (perm^1) + ")");
+            player.sendMessage(ChatColor.RED+"Godmode disabled (" + (perm^1) + ")");
+            return false;
         } else {
             this.gods.put(player, perm|1);
-            player.sendMessage("GodMode enabled (" + (perm|1) + ")");
+            player.sendMessage(ChatColor.GREEN+"GodMode enabled (" + (perm|1) + ")");
+            return true;
         }
     }
 
