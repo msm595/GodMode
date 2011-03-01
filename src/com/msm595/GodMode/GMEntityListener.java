@@ -24,11 +24,13 @@ public class GMEntityListener extends EntityListener{
              if(plugin.isGod(player)) {
                  //event.setDamage(0); //not needed?
                  event.setCancelled(true);
-                 if(plugin.noFire(player) &&
+                 
+             }
+             if(plugin.noFire(player) &&
                          event.getCause().equals(DamageCause.FIRE_TICK)) {
                      player.setFireTicks(0);
+                     //System.out.println("Stop fire");
                  }
-             }
          }
      }
 }
