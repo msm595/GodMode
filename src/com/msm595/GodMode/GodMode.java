@@ -12,6 +12,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.Plugin;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import org.bukkit.ChatColor;
@@ -30,26 +31,28 @@ public class GodMode extends JavaPlugin {
     
     private boolean usePermissions = false;
     public static PermissionHandler Permissions;
-    private Listener Listener = new Listener();
 
     
     /*
      * Permissions code, listen in onto permissions, check if it's there
      */
-    private class Listener extends ServerListener {
-
-        public Listener() {
-        }
-
-        @Override
-        public void onPluginEnabled(PluginEvent event) {
-            if(event.getPlugin().getDescription().getName().equals("Permissions")) {
-                GodMode.Permissions = ((Permissions)event.getPlugin()).Security;
-                System.out.println("["+pdfFile.getName().toUpperCase()+"] Attached plugin to Permissions.");
-                usePermissions=true;
-            }
-        }
-    }
+    public void setupPermissions() {
+	Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
+	PluginDescriptionFile pdfFile = this.getDescription();
+		
+	if (this.Permissions == null) {
+		if (test!= null) {
+			this.getServer().getPluginManager().enablePlugin(test);
+			this.Permissions = ((Permissions) test).getHandler();
+                        System.out.println("["+pdfFile.getName().toUpperCase()+"] Attached plugin to Permissions.");
+                        usePermissions=true;
+		}
+//		else {
+//			System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + "not enabled. Permissions not detected");
+//			this.getServer().getPluginManager().disablePlugin(this);
+//		}
+	}
+}
 
     /*
      * Create the hashmap for gods. integer values are a binary permission system:
@@ -79,7 +82,8 @@ public class GodMode extends JavaPlugin {
         //Create the pluginmanage pm.
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Event.Priority.Normal, this);
-        pm.registerEvent(Event.Type.PLUGIN_ENABLE, Listener, Event.Priority.Monitor, this);
+        //pm.registerEvent(Event.Type.PLUGIN_ENABLE, Listener, Event.Priority.Monitor, this
+        setupPermissions();
         //Print that the plugin has been enabled!
         System.out.println( "["+pdfFile.getName().toUpperCase() + "] " + pdfFile.getVersion() + " is enabled!" );
 
