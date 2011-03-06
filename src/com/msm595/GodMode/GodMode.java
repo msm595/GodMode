@@ -27,6 +27,7 @@ import org.bukkit.command.ConsoleCommandSender;
 */
 public class GodMode extends JavaPlugin {
     private final GMEntityListener entityListener = new GMEntityListener(this);
+    private final GMPlayerListener playerListener = new GMPlayerListener(this);
     public static PluginDescriptionFile pdfFile;
     
     private boolean usePermissions = false;
@@ -83,6 +84,7 @@ public class GodMode extends JavaPlugin {
         //Create the pluginmanage pm.
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Event.Priority.Normal, this);
+        pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
         setupPermissions();
         //Print that the plugin has been enabled!
         System.out.println( "["+pdfFile.getName().toUpperCase() + "] " + pdfFile.getVersion() + " is enabled!" );
