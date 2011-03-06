@@ -10,9 +10,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 //Start the class BasicBlockListener
 public class GMEntityListener extends EntityListener{
-     private final GodMode plugin;
-     public GMEntityListener(GodMode instance) {
-     plugin = instance;
+    private final GodMode plugin;
+    public GMEntityListener(GodMode instance) {
+        plugin = instance;
     }
 
      public void onEntityDamage(EntityDamageEvent event) {

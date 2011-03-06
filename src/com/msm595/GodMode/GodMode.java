@@ -38,12 +38,12 @@ public class GodMode extends JavaPlugin {
      */
     public void setupPermissions() {
 	Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
-	PluginDescriptionFile pdfFile = this.getDescription();
+	//pdfFile = this.getDescription();
 		
-	if (this.Permissions == null) {
+	if (Permissions == null) {
 		if (test!= null) {
 			this.getServer().getPluginManager().enablePlugin(test);
-			this.Permissions = ((Permissions) test).getHandler();
+			Permissions = ((Permissions) test).getHandler();
                         System.out.println("["+pdfFile.getName().toUpperCase()+"] Attached plugin to Permissions.");
                         usePermissions=true;
 		}
@@ -64,7 +64,8 @@ public class GodMode extends JavaPlugin {
      * each separate permission is a power of 2 eg: 2^0=1, 2^1=2, etc...
      * permissions can be combined simply by adding (1+8=9 would be invincible and fires would be put out)
      */
-     public final HashMap<Player, Integer> gods = new HashMap();  
+     private final HashMap<Player, Integer> gods = new HashMap();  
+     private final HashMap<Player, String> worlds = new HashMap();  
 
 
     @Override
@@ -82,7 +83,6 @@ public class GodMode extends JavaPlugin {
         //Create the pluginmanage pm.
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Event.Priority.Normal, this);
-        //pm.registerEvent(Event.Type.PLUGIN_ENABLE, Listener, Event.Priority.Monitor, this
         setupPermissions();
         //Print that the plugin has been enabled!
         System.out.println( "["+pdfFile.getName().toUpperCase() + "] " + pdfFile.getVersion() + " is enabled!" );
@@ -107,7 +107,7 @@ public class GodMode extends JavaPlugin {
                     return true;
                 }
                 player.sendMessage(ChatColor.RED+"You don't have permission to use this command");
-                return false;
+                return true;
             }
             
             //noFire self
@@ -190,30 +190,40 @@ public class GodMode extends JavaPlugin {
         return false;
     }
 
-    //The method enabled which checks to see if the player is in the hashmap basicUsers
+    //is the player currently in godmode
     public boolean isGod(Player player) {
         return (getPerm(player) & 1) != 0;
     }
 
+    //does the player currently have noFire enabled
     public boolean noFire(Player player) {
         return (getPerm(player) & 8) != 0;
     }
     
+    //can the player toggle godmode
     public boolean canGod(Player player) {
         return (getPerm(player) & 2) != 0;
     }
     
+    //can the player toggle godmode on other players
     public boolean canGodOther(Player player) {
         return (getPerm(player) & 4) != 0;
     }
     
+    //can the player toggle niFire
     public boolean canToggleFire(Player player) {
         return (getPerm(player) & 16) != 0;
     }
     
     public int getPerm(Player player) {
-        if(this.gods.get(player)!=null) {
-            return this.gods.get(player);
+        if(this.gods.containsKey(player)) {
+            
+            //is the player in the same world as when the permissions were cached?
+            if(player.getWorld().getName().equals(this.worlds.get(player))) {
+                return this.gods.get(player);
+            }
+            this.gods.remove(player);
+            return getPerm(player);
         }
         
         if(usePermissions) {
@@ -239,6 +249,7 @@ public class GodMode extends JavaPlugin {
             }
             
             this.gods.put(player, perm);
+            this.worlds.put(player, player.getWorld().getName());
             return perm;
         }
         
@@ -246,8 +257,7 @@ public class GodMode extends JavaPlugin {
          //will change in next version
     }
     
-    //The method toggleVision which if the player is on the hashmap will remove the player else it will add the player.
-    //Also sends user a message to notify them.
+    //Will turn godmode on if it is off, and off if it is on
     public boolean toggleGodMode(Player player) {
         int perm=getPerm(player);
         
@@ -301,6 +311,13 @@ public class GodMode extends JavaPlugin {
             this.gods.put(player, perm|8);
             player.sendMessage(ChatColor.GREEN+"GodMode: put out fire enabled by "+by);
             return true;
+        }
+    }
+    
+    //reset the player's cached permissions (used when the player teleports
+    public void reset(Player player) {
+        if(this.gods.containsKey(player)) {
+            this.gods.remove(player);
         }
     }
 }
