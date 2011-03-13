@@ -2,6 +2,7 @@ package com.msm595.GodMode;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -19,6 +20,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.util.config.Configuration;
 
 /**
 * Sample plugin for Bukkit
@@ -26,34 +28,33 @@ import org.bukkit.command.ConsoleCommandSender;
 * @author Dinnerbone
 */
 public class GodMode extends JavaPlugin {
+    //public final String pluginDir = "plugins/GodMode/";
+    //private final File settings = new File(pluginDir + "settings.yml");
+    
     private final GMEntityListener entityListener = new GMEntityListener(this);
     private final GMPlayerListener playerListener = new GMPlayerListener(this);
     public static PluginDescriptionFile pdfFile;
     
-    private boolean usePermissions = false;
+    //private boolean usePermissions = false;
     public static PermissionHandler Permissions;
+    public static Configuration conf;
 
     
     /*
      * Permissions code, listen in onto permissions, check if it's there
      */
-    public void setupPermissions() {
-	Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
-	//pdfFile = this.getDescription();
-		
-	if (Permissions == null) {
-		if (test!= null) {
-			this.getServer().getPluginManager().enablePlugin(test);
-			Permissions = ((Permissions) test).getHandler();
-                        System.out.println("["+pdfFile.getName().toUpperCase()+"] Attached plugin to Permissions.");
-                        usePermissions=true;
-		}
-//		else {
-//			System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + "not enabled. Permissions not detected");
-//			this.getServer().getPluginManager().disablePlugin(this);
-//		}
-	}
-}
+private void setupPermissions() {
+      Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
+
+      if (this.Permissions == null) {
+          if (test != null && conf.getBoolean("usePermissions", false)) {
+              this.Permissions = ((Permissions)test).getHandler();
+              System.out.println("["+pdfFile.getName().toUpperCase()+"] Using Permissions.");
+          } else {
+              System.out.println("["+pdfFile.getName().toUpperCase()+"] Not using Permissions.");
+          }
+      }
+  }
 
     /*
      * Create the hashmap for gods. integer values are a binary permission system:
@@ -81,14 +82,35 @@ public class GodMode extends JavaPlugin {
     //When the plugin is enabled this method is called.
     public void onEnable() {
         pdfFile = this.getDescription();
+        conf = this.getConfiguration();
         //Create the pluginmanage pm.
         PluginManager pm = getServer().getPluginManager();
+
+        //set up the settings
+        if(getDataFolder().mkdir()) {
+            conf.load();
+            conf.save();
+            System.out.println("["+pdfFile.getName().toUpperCase() + "] The settings file been created. Please set it up before using the plugin. The plugin will be disabled until you do.");
+            pm.disablePlugin(this);
+            return;
+        }
+        
+        if(conf.getProperty("usePermissions")==null) {
+            System.err.println("["+pdfFile.getName().toUpperCase() + "] The settings file isn't properly set up. Please set it up before using the plugin. The plugin will be disabled until you do.");
+            pm.disablePlugin(this);
+            return;
+        }
+        
+        //System.out.println(getConfiguration());
+        System.out.println(getDataFolder().exists());
+        System.out.println(getDataFolder().getAbsolutePath());
+        
         pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
         setupPermissions();
+        
         //Print that the plugin has been enabled!
         System.out.println( "["+pdfFile.getName().toUpperCase() + "] " + pdfFile.getVersion() + " is enabled!" );
-
     }
     
     @Override
@@ -228,7 +250,7 @@ public class GodMode extends JavaPlugin {
             return getPerm(player);
         }
         
-        if(usePermissions) {
+        if(conf.getBoolean("usePermissions", false)) {
             int perm=0;
             if(GodMode.Permissions.permission(player, "godmode.default.god")) {
                 perm=1;
@@ -255,8 +277,71 @@ public class GodMode extends JavaPlugin {
             return perm;
         }
         
-         return 2|16; //for now if there isn't permissions let every user use god,
-         //will change in next version
+        if(player.isOp()) {
+            //return 1|2|4|8|16; @TODO
+        }
+        
+        //get all the worlds with specific settings
+        LinkedHashMap<String, Object> perms=(LinkedHashMap)conf.getProperty("worlds");
+        int perm=0;
+        
+        //if there are special settings for the world the player is in
+        if(perms.get(player.getWorld().getName())!=null) {
+            //list of both default and commands of the world the player is in
+            LinkedHashMap<String, Object> worldPerm = (LinkedHashMap)perms.get(player.getWorld().getName());
+            
+            ArrayList<String> defaultP = (ArrayList)worldPerm.get("default");
+            if(defaultP!=null) {
+                if(defaultP.contains("god")) {
+                    perm=1;
+                }
+                if(defaultP.contains("noFire")) {
+                    perm=perm|8;
+                }
+            }
+            
+            ArrayList<String> commandP = (ArrayList)worldPerm.get("commands");
+            if(commandP!=null) {
+                if(commandP.contains("godSelf")) {
+                    perm=perm|2;
+                }
+                if(commandP.contains("godOther")) {
+                    perm=perm|4;
+                }
+                if(commandP.contains("noFire")) {
+                    perm=perm|16;
+                }
+            }
+        } else {
+            ArrayList<String> defaultP = (ArrayList)conf.getStringList("default.default", null);
+            if(defaultP!=null) {
+                if(defaultP.contains("god")) {
+                    perm=1;
+                }
+                if(defaultP.contains("noFire")) {
+                    perm=perm|8;
+                }
+            }
+            
+            ArrayList<String> commandP = (ArrayList)conf.getStringList("default.commands", null);
+            if(commandP!=null) {
+                if(commandP.contains("godSelf")) {
+                    perm=perm|2;
+                }
+                if(commandP.contains("godOther")) {
+                    perm=perm|4;
+                }
+                if(commandP.contains("noFire")) {
+                    perm=perm|16;
+                }
+            }
+        }
+//          System.out.println(conf.getStringList("default.default", null).size());
+//        System.out.println(((LinkedHashMap)conf.getProperty("worlds")).get("nether").getClass());
+        
+        this.gods.put(player, perm);
+        this.worlds.put(player, player.getWorld().getName());
+        return perm;
     }
     
     //Will turn godmode on if it is off, and off if it is on
