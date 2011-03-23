@@ -70,6 +70,11 @@ private void setupPermissions() {
      private final HashMap<Player, String> worlds = new HashMap();  
 
 
+    //@Override
+    public void onLoad() {
+        
+    }
+     
     @Override
     //When the plugin is disabled this method is called.
     public void onDisable() {
