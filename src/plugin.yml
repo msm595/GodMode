@@ -1,6 +1,6 @@
 name: GodMode
 main: com.msm595.GodMode.GodMode
-version: 0.2.0
+version: 0.2.3
 author: Msm595
 description: >
              Lightweight godmode plugin with optional permissions.
