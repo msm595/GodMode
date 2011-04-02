@@ -110,7 +110,7 @@ private void setupPermissions() {
         System.out.println(getDataFolder().exists());
         System.out.println(getDataFolder().getAbsolutePath());
         
-        pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Event.Priority.Normal, this);
+        pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
         setupPermissions();
         
@@ -291,7 +291,7 @@ private void setupPermissions() {
         int perm=0;
         
         //if there are special settings for the world the player is in
-        if(perms.get(player.getWorld().getName())!=null) {
+        if(perms!=null&&perms.get(player.getWorld().getName())!=null) {
             //list of both default and commands of the world the player is in
             LinkedHashMap<String, Object> worldPerm = (LinkedHashMap)perms.get(player.getWorld().getName());
             
