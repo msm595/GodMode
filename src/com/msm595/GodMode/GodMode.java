@@ -1,9 +1,5 @@
 package com.msm595.GodMode;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.HashMap;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -14,19 +10,27 @@ import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.Plugin;
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.util.config.Configuration;
+import com.nijiko.permissions.PermissionHandler;
+import com.nijikokun.bukkit.Permissions.Permissions;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.HashMap;
 
 /**
-* Sample plugin for Bukkit
-*
-* @author Dinnerbone
-*/
+ *
+ * @author Alex Epifano
+ * 
+ * @license Creative Commons Attribution-ShareAlike 3.0 Unported License
+ * http://creativecommons.org/licenses/by-sa/3.0/
+ */
+
 public class GodMode extends JavaPlugin {
     //public final String pluginDir = "plugins/GodMode/";
     //private final File settings = new File(pluginDir + "settings.yml");

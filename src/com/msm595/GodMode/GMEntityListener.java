@@ -1,14 +1,12 @@
-//The package
 package com.msm595.GodMode;
 
-//All the imports
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-//Start the class BasicBlockListener
+
 public class GMEntityListener extends EntityListener{
     private final GodMode plugin;
     public GMEntityListener(GodMode instance) {

@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.msm595.GodMode;
 
 import org.bukkit.event.player.PlayerListener;
@@ -11,10 +6,7 @@ import java.util.HashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
 
-/**
- *
- * @author Alex
- */
+
 public class GMPlayerListener extends PlayerListener {
     private final GodMode plugin;
     
