@@ -1,34 +1,34 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 package com.msm595.GodMode;
 
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityListener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-
-public class GMEntityListener extends EntityListener{
-    private final GodMode plugin;
-    public GMEntityListener(GodMode instance) {
-        plugin = instance;
+/**
+ *
+ * @author Alex
+ */
+public class GMEntityListener extends EntityListener {
+    
+    @Override
+    public void onEntityDeath(EntityDeathEvent event) {
+        if(!(event.getEntity() instanceof Player)) return;
+        
+        Player player = (Player) event.getEntity();
+        System.out.println(event.getDrops().toString());
+        System.out.println(player.getInventory().getContents()[0]);
     }
-
-     public void onEntityDamage(EntityDamageEvent event) {
-         Entity entity = event.getEntity();
-         if(entity instanceof Player) {
-             Player player = (Player)entity;
-
-             //player.sendMessage("You were damaged by " + event.getCause().name());
-             if(plugin.isGod(player)) {
-                 //event.setDamage(0); //not needed?
-                 event.setCancelled(true);
-                 
-             }
-             if(plugin.noFire(player) &&
-                         event.getCause().equals(DamageCause.FIRE_TICK)) {
-                     player.setFireTicks(0);
-                     //System.out.println("Stop fire");
-                 }
-         }
-     }
+    
+    @Override
+    public void onEntityDamage(EntityDamageEvent event) {
+        if(!(event.getEntity() instanceof Player)) return;
+        
+        event.
+    }
 }
