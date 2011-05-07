@@ -85,6 +85,12 @@ public class GMPermissionsHandler {
         return ((ArrayList<String>)getWorldPerm(player.getWorld().getName()).get("default")).contains(permission);
     }
     
+    private boolean can(Player player, String command) { //return if player can use commands
+        if(usePermissions())
+            return permissionHandler.has(player, "godmode.command."+command);
+        return ((ArrayList<String>)getWorldPerm(player.getWorld().getName()).get("commands")).contains(command);
+    }
+    
     public boolean defaultGod(Player player) {
         return is(player, "god");
     }
@@ -96,4 +102,16 @@ public class GMPermissionsHandler {
 //    public boolean defaultAirBubble(Player player) {
 //        return is(player, "airBubble");
 //    }
+    
+    public boolean canGodSelf(Player player) {
+        return can(player, "godSelf");
+    }
+    
+    public boolean canGodOther(Player player) {
+        return can(player, "godOther");
+    }
+    
+    public boolean canFire(Player player) {
+        return can(player, "noFire");
+    }
 }

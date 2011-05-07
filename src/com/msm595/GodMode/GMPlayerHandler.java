@@ -79,4 +79,16 @@ public class GMPlayerHandler {
 //    public boolean airBubble(Player p) {
 //        return players.get(p).airBubble();
 //    }
+    
+    public boolean isPlayer(Player p) {
+        return players.containsKey(p);
+    }
+    
+    public boolean toggleGod(Player p) {
+        return players.get(p).toggleGod();
+    }
+    
+    public boolean toggleFire(Player p) {
+        return players.get(p).toggleFire();
+    }
 }
