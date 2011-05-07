@@ -10,24 +10,29 @@ import org.bukkit.entity.Player;
  *
  * @author Alex
  */
-public class God {
-    private Player player;
-    
+public class God {  
     private boolean isGod;
     private boolean noFire;
+    private boolean airBubble;
+    private String world;
     
-    public God(Player p) {
-        this(p, false, false);
+    public God() {
+        this(false, false, false, "");
     }
-    
-    public God(Player p, boolean g) {
-        this(p, g, false);
+    public God(boolean g) {
+        this(g, false, false, "");
     }
-    
-    public God(Player p, boolean g, boolean n) {
-        player = p;
+    public God(boolean g, boolean n) {
+        this(g, n, false, "");
+    }
+    public God(boolean g, boolean n, boolean a) {
+        this(g, n, a, "");
+    }
+    public God(boolean g, boolean n, boolean a, String w) {
         isGod = g;
         noFire = n;
+        airBubble = a;
+        world = w;
     }
     
     
@@ -59,5 +64,29 @@ public class God {
         noFire = !noFire;
         return noFire;
     }
-
+    
+    
+    
+//    public boolean airBubble() {
+//        return airBubble;
+//    }
+//    
+//    public void airBubble(boolean a) {
+//        airBubble = a;
+//    }
+//    
+//    public boolean toggleBubble() {
+//        airBubble = !airBubble;
+//        return airBubble;
+//    }
+    
+    
+    
+    public String getWorld() {
+        return world;
+    }
+    
+    public void setWorld(String w) {
+        world = w;
+    }
 }

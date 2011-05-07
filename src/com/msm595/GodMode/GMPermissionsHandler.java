@@ -5,9 +5,13 @@
 
 package com.msm595.GodMode;
 
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+
 import org.bukkit.util.config.Configuration;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.entity.Player;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -28,7 +32,7 @@ public class GMPermissionsHandler {
     
     public void init() {
         if(plugin.getDataFolder().mkdir()) {
-            conf.setProperty("#read the thread to see all options", null);
+            conf.setProperty("#", "read the thread to see all options");
             conf.setProperty("usePermissions", false);
             conf.setProperty("default.default", new String[]{"noFire"});
             conf.setProperty("default.commands", new String[]{"noFire"});
@@ -62,5 +66,34 @@ public class GMPermissionsHandler {
         conf.load();
     }
     
+    public boolean usePermissions() {
+        return conf.getBoolean("usePermissions", false);
+    }
     
+    private LinkedHashMap<String, Object> getWorldPerm(String world) {
+        LinkedHashMap<String, Object> worlds = (LinkedHashMap)conf.getProperty("worlds");
+        
+        if(worlds.containsKey(world))
+            return (LinkedHashMap)worlds.get(world);
+        
+        return (LinkedHashMap)conf.getProperty("default");
+    }
+    
+    private boolean is(Player player, String permission) { //return if player has default setting
+        if(usePermissions())
+            return permissionHandler.has(player, "godmode.default."+permission);
+        return ((ArrayList<String>)getWorldPerm(player.getWorld().getName()).get("default")).contains(permission);
+    }
+    
+    public boolean defaultGod(Player player) {
+        return is(player, "god");
+    }
+    
+    public boolean defaultNoFire(Player player) {
+        return is(player, "noFire");
+    }
+    
+//    public boolean defaultAirBubble(Player player) {
+//        return is(player, "airBubble");
+//    }
 }
