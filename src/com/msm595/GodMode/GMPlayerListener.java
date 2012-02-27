@@ -5,27 +5,31 @@
 
 package com.msm595.GodMode;
 
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 /**
  *
  * @author Alex
  */
-public class GMPlayerListener extends PlayerListener {
+public class GMPlayerListener implements Listener {
     GodMode plugin;
     
     public GMPlayerListener(GodMode p) {
         plugin = p;
     }
     
-    @Override
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         plugin.playerHandler.join(event.getPlayer());
     }
     
-    @Override
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
-        plugin.playerHandler.teleport(event.getPlayer());
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        plugin.playerHandler.join(event.getPlayer());
     }
 }

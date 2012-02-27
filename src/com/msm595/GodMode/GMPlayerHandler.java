@@ -28,14 +28,6 @@ public class GMPlayerHandler {
         
     }
     
-    public void teleport(Player player) {
-        if(!players.containsKey(player) || 
-               !player.getWorld().getName().equals(players.get(player).getWorld())) {
-            join(player);
-            return;
-        }
-    }
-    
     public void join(Player player) {
         God g;
         if(players.containsKey(player)) {
