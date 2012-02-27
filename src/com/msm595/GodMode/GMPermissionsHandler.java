@@ -13,9 +13,6 @@ import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.entity.Player;
 
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
-
 /**
  *
  * @author Alex
@@ -23,7 +20,6 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 public class GMPermissionsHandler {
     private GodMode plugin;
     private Configuration conf;
-    public static PermissionHandler permissionHandler;
     
     public GMPermissionsHandler(GodMode p) {
         plugin=p;
@@ -47,19 +43,6 @@ public class GMPermissionsHandler {
         }
         
         load();
-        
-        if(conf.getBoolean("usePermissions", false)) {
-            Plugin permissionsPlugin = plugin.getServer().getPluginManager().getPlugin("Permissions");
-
-            if (permissionHandler == null) {
-                if (permissionsPlugin != null) {
-                    this.permissionHandler = ((Permissions) permissionsPlugin).getHandler();
-                } else {
-                    plugin.log.warning("["+plugin.pdfFile.getName().toUpperCase()+"] Permission system not detected, defaulting to settings file.");
-                    conf.setProperty("usePermissions", false);
-                }
-            }
-        }
     }
     
     public void load() {
@@ -81,13 +64,13 @@ public class GMPermissionsHandler {
     
     private boolean is(Player player, String permission) { //return if player has default setting
         if(usePermissions())
-            return permissionHandler.has(player, "godmode.default."+permission);
+            return player.hasPermission("godmode.default."+permission);
         return ((ArrayList<String>)getWorldPerm(player.getWorld().getName()).get("default")).contains(permission);
     }
     
     private boolean can(Player player, String command) { //return if player can use commands
         if(usePermissions())
-            return permissionHandler.has(player, "godmode.command."+command);
+            return player.hasPermission("godmode.command."+command);
         return ((ArrayList<String>)getWorldPerm(player.getWorld().getName()).get("commands")).contains(command);
     }
     

@@ -2,9 +2,6 @@ package com.msm595.GodMode;
 
 import java.util.logging.Logger;
 
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
-
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -48,10 +45,8 @@ public class GodMode extends JavaPlugin {
     public void onEnable() {
         perm.init();
         
-        //pm.registerEvent(Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
-        pm.registerEvent(Type.ENTITY_DAMAGE, entityListener, Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
+        pm.registerEvents(playerListener, this);
+        pm.registerEvents(entityListener, this);
         
         log.info( "["+pdfFile.getName().toUpperCase() + "] " + pdfFile.getVersion() + " is enabled!" );
     }
